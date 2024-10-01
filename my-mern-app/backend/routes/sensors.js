@@ -1,19 +1,15 @@
-// routes/sensors.js
 const express = require('express');
 const router = express.Router();
-const Sensor = require('../models/Sensor'); // Adjust path to your Sensor model
+const SensorData = require('../models/sensorData'); // Ensure this is your model
 
-// GET all sensor data
+// Get all sensor data
 router.get('/', async (req, res) => {
-    console.log('Fetching sensor data...'); // Log request to fetch sensor data
     try {
-        const sensors = await Sensor.find(); // Fetch data from the database
-        console.log(sensors); // Log fetched data for debugging
-        res.json(sensors); // Respond with the sensor data
+        const data = await SensorData.find();
+        res.json(data);
     } catch (error) {
-        console.error('Error fetching sensor data:', error); // Log error
-        res.status(500).json({ message: 'Error fetching sensor data' }); // Respond with error message
+        res.status(500).json({ message: 'Server Error', error: error.message });
     }
 });
 
-module.exports = router; // Export the router
+module.exports = router;
