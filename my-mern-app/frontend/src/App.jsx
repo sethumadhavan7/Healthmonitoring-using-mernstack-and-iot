@@ -11,7 +11,8 @@ function App() {
 
   const fetchSensorData = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/sensors'); // Updated API URL
+      // Update API URL to the deployed backend domain
+      const response = await axios.get('https://healthmonitoring-using-mernstack-and-iot.vercel.app/api/sensors'); 
       const data = response.data;
       setSensorData(data);
       handleAlert(data[data.length - 1].pulse); // Call alert function for the latest pulse
