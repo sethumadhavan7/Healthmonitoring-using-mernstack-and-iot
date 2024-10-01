@@ -4,7 +4,7 @@ const cors = require('cors');
 require('dotenv').config(); // Import environment variables
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;  // Use process.env.PORT for Vercel deployment
 
 // Middleware
 app.use(express.json());
