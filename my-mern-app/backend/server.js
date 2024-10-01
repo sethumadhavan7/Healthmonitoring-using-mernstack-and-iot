@@ -4,11 +4,17 @@ const cors = require('cors');
 require('dotenv').config(); // Import environment variables
 
 const app = express();
-const port = 5000;
+app.use(cors(
+    {
+        origin: ["https://deploy-mern-1whq.vercel.app"],
+        methods: ["POST" ,"GET"],
+        credentials: true
+    }
+));
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {
