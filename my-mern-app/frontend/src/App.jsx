@@ -11,7 +11,7 @@ function App() {
 
     const fetchSensorData = async () => {
         try {
-            const response = await axios.get('https://healthmonitoring-using-mernstack-and-iot.vercel.app/api/sensors');
+            const response = await axios.get('https://healthmonitoring-using-mernstack-and-iot.vercel.app/routes/sensors');
             const data = response.data;
             console.log('Fetched data:', data); // Log the data fetched
             setSensorData(data);
