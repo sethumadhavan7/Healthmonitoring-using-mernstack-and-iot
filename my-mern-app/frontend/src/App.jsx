@@ -7,11 +7,13 @@ import './App.css'; // Ensure you create this file for custom styles
 function App() {
     const [sensorData, setSensorData] = useState([]);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [alertMessage, setAlertMessage] = useState('');
 
     // Updated URL for fetching sensor data from the backend
     const fetchSensorData = async () => {
         try {
+            setLoading(true); // Start loading
             const response = await axios.get('https://healthmonitoring-using-mernstack-and-iot.vercel.app/api/sensors');
             const data = response.data;
             console.log('Fetched data:', data); // Log the data fetched
@@ -28,6 +30,8 @@ function App() {
         } catch (err) {
             setError('Error fetching sensor data');
             console.error(err);
+        } finally {
+            setLoading(false); // Stop loading
         }
     };
 
@@ -87,6 +91,7 @@ function App() {
         <div className="App">
             <h1>Health Monitoring Dashboard</h1>
 
+            {loading && <p>Loading...</p>}
             {error && <p className="error">{error}</p>}
             {alertMessage && <div className="alert">{alertMessage}</div>}
 
