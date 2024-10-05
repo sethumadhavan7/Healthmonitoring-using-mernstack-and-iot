@@ -13,17 +13,24 @@ mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 // CORS options
 const corsOptions = {
-    origin: 'https://healthmonitoring-using-mernstack-and-iot.vercel.app', // Replace with your frontend URL
+    origin: 'https://healthmonitoring-using-mernstack-and-iot-frontend.vercel.app', // Replace with your frontend URL
     methods: ['GET', 'POST'], // Allow GET and POST requests
 };
 
 app.use(cors(corsOptions));
 app.use(express.json());
 
+// Define your Sensor model (Make sure to create the model according to your schema)
+const Sensor = mongoose.model('Sensor', new mongoose.Schema({
+    pulse: Number,
+    temperature: Number,
+    humidity: Number
+}));
+
 // Define your routes
 app.get('/api/sensors', async (req, res) => {
     try {
-        const sensors = await Sensor.find(); // Assuming you have a Sensor model
+        const sensors = await Sensor.find(); // Fetch all sensor data
         res.json(sensors);
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -33,7 +40,7 @@ app.get('/api/sensors', async (req, res) => {
 
 app.post('/api/sensors', async (req, res) => {
     try {
-        const newSensor = new Sensor(req.body); // Assuming req.body has the sensor data
+        const newSensor = new Sensor(req.body); // Create a new sensor record
         await newSensor.save();
         res.status(201).json(newSensor);
     } catch (error) {
