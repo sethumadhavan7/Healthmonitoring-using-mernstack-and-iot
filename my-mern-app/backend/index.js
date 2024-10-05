@@ -1,17 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config(); // Import environment variables
 
 const app = express();
-const port = process.env.PORT || 5000; // Use environment variable for port
+const port = process.env.PORT || 5000; // You can still use the PORT environment variable from Vercel
 
 // Middleware
 app.use(express.json());
 app.use(cors());
 
-// MongoDB connection
-mongoose.connect(process.env.MONGO_URI, {
+// MongoDB connection (hardcoded connection string)
+mongoose.connect('mongodb+srv://sethu:1234@cluster0.dbntwx8.mongodb.net/mydatabase?retryWrites=true&w=majority&appName=Cluster0', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
