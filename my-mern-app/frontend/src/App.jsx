@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
-import './App.css';  // Ensure you create this file for custom styles
+import './App.css'; // Ensure you create this file for custom styles
 
 function App() {
     const [sensorData, setSensorData] = useState([]);
     const [error, setError] = useState(null);
     const [alertMessage, setAlertMessage] = useState('');
 
+    // Updated URL for fetching sensor data from the backend
     const fetchSensorData = async () => {
         try {
             const response = await axios.get('https://healthmonitoring-using-mernstack-and-iot.vercel.app/api/sensors');
