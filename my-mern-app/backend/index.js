@@ -20,7 +20,13 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Define your Sensor model (Make sure to create the model according to your schema)
+// CSP Header to allow scripts
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-eval';");
+    next();
+});
+
+// Define your Sensor model
 const Sensor = mongoose.model('Sensor', new mongoose.Schema({
     pulse: Number,
     temperature: Number,
