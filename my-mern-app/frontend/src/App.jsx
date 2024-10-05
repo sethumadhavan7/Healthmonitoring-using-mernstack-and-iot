@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
-import './App.css'; // Ensure you have this CSS file for custom styles
+import './App.css';
 
 function App() {
     const [sensorData, setSensorData] = useState([]);
     const [error, setError] = useState(null);
     const [alertMessage, setAlertMessage] = useState('');
 
-    // Function to fetch sensor data from the backend
+    // Fetch sensor data
     const fetchSensorData = async () => {
         try {
             const response = await axios.get('https://healthmonitoring-using-mernstack-and-iot.vercel.app/api/sensors');
@@ -17,9 +17,8 @@ function App() {
             console.log('Fetched data:', data); // Log the data fetched
             setSensorData(data);
 
-            // If there is any data, call the handleAlert function
             if (data.length > 0) {
-                handleAlert(data[data.length - 1].pulse); // Call alert function for the latest pulse
+                handleAlert(data[0].pulse); // Alert for the latest data (first entry)
             }
         } catch (err) {
             setError('Error fetching sensor data');
@@ -28,16 +27,13 @@ function App() {
     };
 
     useEffect(() => {
-        // Fetch data initially
         fetchSensorData();
-        // Set an interval to fetch data every 5 seconds
-        const interval = setInterval(fetchSensorData, 5000);
+        const interval = setInterval(fetchSensorData, 5000); // Fetch new data every 5 seconds
 
-        // Clear the interval when the component unmounts
         return () => clearInterval(interval);
     }, []);
 
-    // Function to display alert message based on pulse
+    // Function to show alert based on pulse rate
     const handleAlert = (pulse) => {
         if (pulse <= 50) {
             setAlertMessage('Low BPM');
@@ -89,15 +85,15 @@ function App() {
             <div className="sensor-boxes">
                 <div className="sensor-box">
                     <h2>Pulse Rate</h2>
-                    <p>{sensorData.length > 0 ? sensorData[sensorData.length - 1].pulse : '--'} BPM</p>
+                    <p>{sensorData.length > 0 ? sensorData[0].pulse : '--'} BPM</p>
                 </div>
                 <div className="sensor-box">
                     <h2>Temperature</h2>
-                    <p>{sensorData.length > 0 ? sensorData[sensorData.length - 1].temperature : '--'} °C</p>
+                    <p>{sensorData.length > 0 ? sensorData[0].temperature : '--'} °C</p>
                 </div>
                 <div className="sensor-box">
                     <h2>Humidity</h2>
-                    <p>{sensorData.length > 0 ? sensorData[sensorData.length - 1].humidity : '--'} %</p>
+                    <p>{sensorData.length > 0 ? sensorData[0].humidity : '--'} %</p>
                 </div>
             </div>
 
