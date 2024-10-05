@@ -16,6 +16,8 @@ function App() {
             const data = response.data;
             console.log('Fetched data:', data); // Log the data fetched
             setSensorData(data);
+
+            // If there is any data, call the handleAlert function
             if (data.length > 0) {
                 handleAlert(data[data.length - 1].pulse); // Call alert function for the latest pulse
             }
@@ -26,7 +28,13 @@ function App() {
     };
 
     useEffect(() => {
+        // Fetch data initially
         fetchSensorData();
+        // Set an interval to fetch data every 5 seconds
+        const interval = setInterval(fetchSensorData, 5000);
+
+        // Clear the interval when the component unmounts
+        return () => clearInterval(interval);
     }, []);
 
     // Function to display alert message based on pulse
