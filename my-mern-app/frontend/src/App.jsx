@@ -15,11 +15,15 @@ function App() {
             const response = await axios.get('https://healthmonitoring-using-mernstack-and-iot.vercel.app/api/sensors');
             const data = response.data;
             console.log('Fetched data:', data); // Log the data fetched
-            setSensorData(data);
+            
+            // Check if the fetched data is different from the current state
+            if (JSON.stringify(data) !== JSON.stringify(sensorData)) {
+                setSensorData(data);
 
-            // If there is any data, call the handleAlert function
-            if (data.length > 0) {
-                handleAlert(data[data.length - 1].pulse); // Call alert function for the latest pulse
+                // If there is any data, call the handleAlert function
+                if (data.length > 0) {
+                    handleAlert(data[data.length - 1].pulse); // Call alert function for the latest pulse
+                }
             }
         } catch (err) {
             setError('Error fetching sensor data');
