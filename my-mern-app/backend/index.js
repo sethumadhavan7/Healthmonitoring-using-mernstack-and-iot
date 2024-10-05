@@ -2,15 +2,20 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
+// MongoDB connection string (hardcoded)
+const mongoUri = 'mongodb+srv://sethu:1234@cluster0.dbntwx8.mongodb.net/mydatabase?retryWrites=true&w=majority&appName=Cluster0';
+
 const app = express();
-const port = process.env.PORT || 5000; // Port can still use the environment variable
+const port = process.env.PORT || 5000; // Use the PORT environment variable from Vercel
 
 // Middleware
 app.use(express.json());
-app.use(cors({ origin: 'https://healthmonitoring-using-mernstack-and-iot-frontend.vercel.app' })); // Ensure CORS is set to allow all origins for now
+app.use(cors({
+    origin: 'https://healthmonitoring-using-mernstack-and-iot-frontend.vercel.app', // Replace with your frontend URL
+}));
 
-// MongoDB connection (hardcoded connection string for Vercel deployment)
-mongoose.connect('mongodb+srv://sethu:1234@cluster0.dbntwx8.mongodb.net/mydatabase?retryWrites=true&w=majority&appName=Cluster0', {
+// MongoDB connection
+mongoose.connect(mongoUri, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
@@ -28,7 +33,9 @@ app.get('/', (req, res) => {
 
 // Routes
 const sensorRoutes = require('./routes/sensors');
-app.use('/sensors', sensorRoutes); // Base route for sensors
+app.use('/api/sensors', sensorRoutes);
 
-// Export the app (for Vercel's serverless function)
-module.exports = app;
+// Start server
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
