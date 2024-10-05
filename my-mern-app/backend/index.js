@@ -11,13 +11,13 @@ const port = process.env.PORT || 5000; // Use the PORT environment variable from
 // Middleware
 app.use(express.json());
 app.use(cors({
-    origin: 'https://healthmonitoring-using-mernstack-and-iot-frontend.vercel.app', // Replace with your frontend URL
+    origin: 'https://healthmonitoring-using-mernstack-and-iot-frontend.vercel.app', // Your frontend URL
 }));
 
 // MongoDB connection
 mongoose.connect(mongoUri, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
 })
 .then(() => {
     console.log('Connected to MongoDB');
