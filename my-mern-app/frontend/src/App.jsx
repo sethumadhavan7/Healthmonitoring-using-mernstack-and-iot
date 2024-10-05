@@ -2,36 +2,28 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
-import './App.css'; // Ensure you create this file for custom styles
+import './App.css'; // Ensure you have this CSS file for custom styles
 
 function App() {
     const [sensorData, setSensorData] = useState([]);
     const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [alertMessage, setAlertMessage] = useState('');
 
-    // Updated URL for fetching sensor data from the backend
+    // Function to fetch sensor data from the backend
     const fetchSensorData = async () => {
         try {
-            setLoading(true); // Start loading
             const response = await axios.get('https://healthmonitoring-using-mernstack-and-iot.vercel.app/api/sensors');
             const data = response.data;
             console.log('Fetched data:', data); // Log the data fetched
-            
-            // Check if the fetched data is different from the current state
-            if (JSON.stringify(data) !== JSON.stringify(sensorData)) {
-                setSensorData(data);
+            setSensorData(data);
 
-                // If there is any data, call the handleAlert function
-                if (data.length > 0) {
-                    handleAlert(data[data.length - 1].pulse); // Call alert function for the latest pulse
-                }
+            // If there is any data, call the handleAlert function
+            if (data.length > 0) {
+                handleAlert(data[data.length - 1].pulse); // Call alert function for the latest pulse
             }
         } catch (err) {
             setError('Error fetching sensor data');
             console.error(err);
-        } finally {
-            setLoading(false); // Stop loading
         }
     };
 
@@ -64,7 +56,7 @@ function App() {
             data: sensorData.map(item => item.pulse),
             borderColor: 'rgba(75, 192, 192, 1)',
             fill: false,
-        }]
+        }],
     };
 
     const temperatureData = {
@@ -74,7 +66,7 @@ function App() {
             data: sensorData.map(item => item.temperature),
             borderColor: 'rgba(255, 99, 132, 1)',
             fill: false,
-        }]
+        }],
     };
 
     const humidityData = {
@@ -84,14 +76,13 @@ function App() {
             data: sensorData.map(item => item.humidity),
             borderColor: 'rgba(54, 162, 235, 1)',
             fill: false,
-        }]
+        }],
     };
 
     return (
         <div className="App">
             <h1>Health Monitoring Dashboard</h1>
 
-            {loading && <p>Loading...</p>}
             {error && <p className="error">{error}</p>}
             {alertMessage && <div className="alert">{alertMessage}</div>}
 
