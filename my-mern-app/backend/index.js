@@ -2,59 +2,46 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-// MongoDB connection string (hardcoded)
-const mongoUri = 'mongodb+srv://sethu:1234@cluster0.dbntwx8.mongodb.net/mydatabase?retryWrites=true&w=majority&appName=Cluster0';
-
 const app = express();
-const port = process.env.PORT || 5000; // Use the PORT environment variable from Vercel
+const PORT = process.env.PORT || 5000;
 
-// Middleware
+const mongoURI = 'mongodb+srv://sethu:1234@cluster0.dbntwx8.mongodb.net/mydatabase?retryWrites=true&w=majority&appName=Cluster0';
+
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log("MongoDB connected"))
+    .catch(err => console.log("MongoDB connection error:", err));
+
+// CORS options
+const corsOptions = {
+    origin: 'https://healthmonitoring-using-mernstack-and-iot.vercel.app', // Replace with your frontend URL
+    methods: ['GET', 'POST'], // Allow GET and POST requests
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
-app.use(cors({
-    origin: 'https://healthmonitoring-using-mernstack-and-iot-frontend.vercel.app', // Your frontend URL
-}));
 
-// MongoDB connection
-mongoose.connect(mongoUri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-.then(() => {
-    console.log('Connected to MongoDB');
-})
-.catch((error) => {
-    console.error('MongoDB connection error:', error);
-});
-
-// Default route
-app.get('/', (req, res) => {
-    res.send('API is running');
-});
-
-// Sensor Schema
-const sensorSchema = new mongoose.Schema({
-    pulse: Number,
-    temperature: Number,
-    humidity: Number,
-}, { timestamps: true });
-
-const Sensor = mongoose.model('Sensor', sensorSchema);
-
-// Route to get sensor data
+// Define your routes
 app.get('/api/sensors', async (req, res) => {
     try {
-        const sensorData = await Sensor.find().sort({ _id: -1 }).limit(10); // Fetch the last 10 readings
-        if (sensorData.length === 0) {
-            return res.status(404).json({ message: 'No sensor data available.' }); // Return a 404 if no data is found
-        }
-        res.json(sensorData);
+        const sensors = await Sensor.find(); // Assuming you have a Sensor model
+        res.json(sensors);
     } catch (error) {
-        console.error('Error fetching sensor data:', error);
-        res.status(500).json({ message: 'Error fetching sensor data' });
+        console.error("Error fetching data:", error);
+        res.status(500).json({ message: "Server error" });
     }
 });
 
-// Start server
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+app.post('/api/sensors', async (req, res) => {
+    try {
+        const newSensor = new Sensor(req.body); // Assuming req.body has the sensor data
+        await newSensor.save();
+        res.status(201).json(newSensor);
+    } catch (error) {
+        console.error("Error saving data:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
