@@ -7,7 +7,7 @@ const port = process.env.PORT || 5000; // Port can still use the environment var
 
 // Middleware
 app.use(express.json());
-app.use(cors({ origin: '*' })); // Ensure CORS is set to allow all origins for now
+app.use(cors({ origin: 'https://healthmonitoring-using-mernstack-and-iot-frontend.vercel.app' })); // Ensure CORS is set to allow all origins for now
 
 // MongoDB connection (hardcoded connection string for Vercel deployment)
 mongoose.connect('mongodb+srv://sethu:1234@cluster0.dbntwx8.mongodb.net/mydatabase?retryWrites=true&w=majority&appName=Cluster0', {
