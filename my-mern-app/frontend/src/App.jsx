@@ -11,7 +11,7 @@ function App() {
 
   const fetchSensorData = async () => {
     try {
-      const response = await axios.get('https://healthmonitoring-using-mernstack-and-iot.vercel.app/api/sensors'); // Updated API URL to Vercel backend URL
+      const response = await axios.get('https://healthmonitoring-using-mernstack-and-iot.vercel.app/api/sensors'); // Updated URL
       const data = response.data;
       setSensorData(data);
       handleAlert(data[data.length - 1].pulse); // Call alert function for the latest pulse
@@ -22,7 +22,11 @@ function App() {
   };
 
   useEffect(() => {
-    fetchSensorData();
+    // Fetch data every 5 seconds
+    const intervalId = setInterval(fetchSensorData, 5000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   // Function to display alert message based on pulse
