@@ -1,47 +1,105 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Line } from 'react-chartjs-2';
+import 'chart.js/auto';
+import './App.css';  // Ensure you create this file for custom styles
 
-const App = () => {
-    const [sensors, setSensors] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+function App() {
+  const [sensorData, setSensorData] = useState([]);
+  const [error, setError] = useState(null);
+  const [alertMessage, setAlertMessage] = useState('');
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('https://healthmonitoring-using-mernstack-and-iot.vercel.app/api/sensors');
-                setSensors(response.data);
-            } catch (err) {
-                console.error("Error fetching data:", err);
-                setError("Error fetching data");
-            } finally {
-                setLoading(false);
-            }
-        };
+  const fetchSensorData = async () => {
+    try {
+      const response = await axios.get('https://healthmonitoring-using-mernstack-and-iot.vercel.app/api/sensors'); // Updated API URL to Vercel backend URL
+      const data = response.data;
+      setSensorData(data);
+      handleAlert(data[data.length - 1].pulse); // Call alert function for the latest pulse
+    } catch (err) {
+      setError('Error fetching sensor data');
+      console.error(err);
+    }
+  };
 
-        fetchData();
+  useEffect(() => {
+    fetchSensorData();
+  }, []);
 
-        // Optional: Add an interval to fetch data every X milliseconds
-        const interval = setInterval(fetchData, 10000); // Fetch every 10 seconds
+  // Function to display alert message based on pulse
+  const handleAlert = (pulse) => {
+    if (pulse <= 50) {
+      setAlertMessage('Low BPM');
+    } else if (pulse > 50 && pulse <= 120) {
+      setAlertMessage('Moderate BPM');
+    } else {
+      setAlertMessage('High BPM');
+    }
+  };
 
-        return () => clearInterval(interval); // Clean up the interval on component unmount
-    }, []);
+  // Prepare data for charts
+  const pulseData = {
+    labels: sensorData.map((_, index) => `Reading ${index + 1}`),
+    datasets: [{
+      label: 'Pulse Rate (BPM)',
+      data: sensorData.map(item => item.pulse),
+      borderColor: 'rgba(75, 192, 192, 1)',
+      fill: false,
+    }]
+  };
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
+  const temperatureData = {
+    labels: sensorData.map((_, index) => `Reading ${index + 1}`),
+    datasets: [{
+      label: 'Temperature (°C)',
+      data: sensorData.map(item => item.temperature),
+      borderColor: 'rgba(255, 99, 132, 1)',
+      fill: false,
+    }]
+  };
 
-    return (
-        <div>
-            <h1>Sensor Data</h1>
-            <ul>
-                {sensors.map(sensor => (
-                    <li key={sensor._id}>
-                        Pulse: {sensor.pulse}, Temperature: {sensor.temperature}, Humidity: {sensor.humidity}
-                    </li>
-                ))}
-            </ul>
+  const humidityData = {
+    labels: sensorData.map((_, index) => `Reading ${index + 1}`),
+    datasets: [{
+      label: 'Humidity (%)',
+      data: sensorData.map(item => item.humidity),
+      borderColor: 'rgba(54, 162, 235, 1)',
+      fill: false,
+    }]
+  };
+
+  return (
+    <div className="App">
+      <h1>Health Monitoring Dashboard</h1>
+
+      {error && <p className="error">{error}</p>}
+      {alertMessage && <div className="alert">{alertMessage}</div>}
+
+      <div className="sensor-boxes">
+        <div className="sensor-box">
+          <h2>Pulse Rate</h2>
+          <p>{sensorData.length > 0 ? sensorData[sensorData.length - 1].pulse : '--'} BPM</p>
         </div>
-    );
-};
+        <div className="sensor-box">
+          <h2>Temperature</h2>
+          <p>{sensorData.length > 0 ? sensorData[sensorData.length - 1].temperature : '--'} °C</p>
+        </div>
+        <div className="sensor-box">
+          <h2>Humidity</h2>
+          <p>{sensorData.length > 0 ? sensorData[sensorData.length - 1].humidity : '--'} %</p>
+        </div>
+      </div>
+
+      <div className="chart-container">
+        <Line data={pulseData} />
+      </div>
+      <div className="chart-container">
+        <Line data={temperatureData} />
+      </div>
+      <div className="chart-container">
+        <Line data={humidityData} />
+      </div>
+    </div>
+  );
+}
 
 export default App;
