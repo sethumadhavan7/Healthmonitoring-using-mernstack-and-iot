@@ -2,53 +2,35 @@ const express = require('express');
 const router = express.Router();
 const Sensor = require('../models/sensor');
 
-// POST route to create new sensor data
-router.post('/', async (req, res, next) => {
+// POST route to create a new sensor data entry
+router.post('/', async (req, res) => {
     try {
         const { pulse, gsr, sleep_state } = req.body;
 
-        // Validate input
+        // Check for missing fields
         if (pulse === undefined || gsr === undefined || !sleep_state) {
-            return res.status(400).json({ 
-                message: 'Missing required fields',
-                required: ['pulse', 'gsr', 'sleep_state']
-            });
+            return res.status(400).json({ message: 'Missing required fields: pulse, gsr, and sleep_state' });
         }
 
-        // Create new document
-        const newSensorData = new Sensor({ 
-            pulse: parseInt(pulse),
-            gsr: parseInt(gsr),
-            sleep_state 
-        });
-
+        // Create new sensor data entry
+        const newSensorData = new Sensor({ pulse, gsr, sleep_state });
         await newSensorData.save();
-        
-        res.status(201).json({
-            message: 'Data saved successfully',
-            data: newSensorData
-        });
-
+        res.status(201).json(newSensorData); // Return created data with 201 status code
     } catch (error) {
-        next(error); // Pass to error handler
+        console.error('Error creating sensor data:', error.message);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
-// GET latest sensor data
-router.get('/', async (req, res, next) => {
+// GET route to fetch latest sensor data
+router.get('/', async (req, res) => {
     try {
-        const limit = parseInt(req.query.limit) || 10;
-        const sensorData = await Sensor.find()
-            .sort({ createdAt: -1 })
-            .limit(limit);
-            
-        res.json({
-            count: sensorData.length,
-            data: sensorData
-        });
+        const sensorData = await Sensor.find().sort({ createdAt: -1 }).limit(10); // Get latest 10 records
+        res.json(sensorData);
     } catch (error) {
-        next(error);
+        console.error('Error fetching sensor data:', error.message);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
-module.exports = router;
+module.exports = router;  
