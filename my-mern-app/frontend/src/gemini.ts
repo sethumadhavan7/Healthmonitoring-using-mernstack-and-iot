@@ -7,13 +7,11 @@ const genAI = new GoogleGenerativeAI(
 
 /**
  * Get a response from the AI model based on the user's message.
- * @param message - The user's input message.
- * @returns The AI-generated response as a string.
  */
 export const getAIResponse = async (message: string) => {
   try {
-    // ✅ Changed model here
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    // ✅ WORKING FREE MODEL
+    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
     const result = await model.generateContent(message);
     const response = await result.response;
@@ -27,10 +25,6 @@ export const getAIResponse = async (message: string) => {
 
 /**
  * Generate quiz questions using the AI model.
- * @param courseName - The name of the course.
- * @param difficulty - The difficulty level of the quiz.
- * @param numQuestions - The number of questions to generate (default: 5).
- * @returns An array of structured quiz questions.
  */
 export const getQuizQuestions = async (
   courseName: string,
@@ -38,8 +32,8 @@ export const getQuizQuestions = async (
   numQuestions: number = 5
 ) => {
   try {
-    // ✅ Changed model here also
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    // ✅ WORKING FREE MODEL
+    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
     const prompt = `
 Generate a multiple-choice quiz for the course "${courseName}"
@@ -62,8 +56,7 @@ Ensure the response is structured and clear.
     const response = await result.response;
     const text = response.text();
 
-    const questions = parseQuizResponse(text);
-    return questions;
+    return parseQuizResponse(text);
   } catch (error) {
     console.error('Error generating quiz questions:', error);
     throw new Error('Failed to generate quiz questions');
