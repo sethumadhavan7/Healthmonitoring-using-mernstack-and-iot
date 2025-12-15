@@ -11,7 +11,7 @@ const genAI = new GoogleGenerativeAI('AIzaSyBRvJwFDjBANW3oQkOYXBgAAsAenWu0-Lg');
 export const getAIResponse = async (message: string) => {
   try {
     // Get the generative model (e.g., 'gemini-2.0-flash')
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     // Generate content based on the user's message
     const result = await model.generateContent(message);
