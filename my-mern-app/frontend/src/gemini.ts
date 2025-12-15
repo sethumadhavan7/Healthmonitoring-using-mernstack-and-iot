@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Initialize the Generative AI client with your API key
-const genAI = new GoogleGenerativeAI('AIzaSyBRvJwFDjBANW3oQkOYXBgAAsAenWu0-Lg'); // Replace with your actual API key
+const genAI = new GoogleGenerativeAI('AIzaSyB2vckH9XmeZkbn5alwBYivpm4i59N3o_o'); // Replace with your actual API key
 
 /**
  * Get a response from the AI model based on the user's message.
